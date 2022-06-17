@@ -8,6 +8,10 @@ license = "MIT OR Apache-2.0"
 readme = "README.md"
 description = "Common functionality used by GE-Man."
 repository = "https://github.com/Compile-Time/GE-Man"
+include = [
+    "**/*.rs",
+    "Cargo.toml"
+]
 
 [dependencies]
 reqwest = { version = "0.11.11", features = ["blocking", "json"] }
