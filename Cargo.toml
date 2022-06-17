@@ -10,26 +10,26 @@ description = "Common functionality used by GE-Man."
 repository = "https://github.com/Compile-Time/GE-Man"
 
 [dependencies]
-reqwest = { version = "0.11.9", features = ["blocking", "json"] }
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-serde_yaml = "0.8"
-ring = "0.16"
-data-encoding = "2.3"
-regex = "1.5"
-lazy_static = "1.4"
+reqwest = { version = "0.11.11", features = ["blocking", "json"] }
+serde = { version = "1.0.137", features = ["derive"] }
+serde_json = "1.0.81"
+serde_yaml = "0.8.24"
+ring = "0.16.20"
+data-encoding = "2.3.2"
+regex = "1.5.6"
+lazy_static = "1.4.0"
 tar = "0.4.38"
-flate2 = { version = "1.0.22", features = ["zlib"], default-features = false }
-xz2 = "0.1.6"
-thiserror = "1.0.30"
-openssl = { version = '0.10.38', optional = true }
+flate2 = { version = "1.0.24", features = ["zlib"], default-features = false }
+xz2 = "0.1.7"
+thiserror = "1.0.31"
+openssl = { version = "0.10.40", optional = true }
 
 [dev-dependencies]
-test-case = "1.2"
-httpmock = "0.6"
-assert_fs = "1.0"
-predicates = "2.0"
-mockall = "0.11.0"
+test-case = "2.1.0"
+httpmock = "0.6.6"
+assert_fs = "1.0.7"
+predicates = "2.1.1"
+mockall = "0.11.1"
 
 [features]
 default = ["reqwest/default-tls"]
