@@ -209,11 +209,11 @@ mod extraction_tests {
         let archive = File::open("test_resources/assets/test.tar.gz").unwrap();
         let kind = TagKind::wine();
 
-        let result = super::extract_compressed(&kind, archive, tmp_dir.path());
+        let result = extract_compressed(&kind, archive, tmp_dir.path());
         assert!(result.is_err());
 
         let err = result.unwrap_err();
-        assert_eq!(err.kind(), io::ErrorKind::Other);
+        assert_eq!(err.kind(), io::ErrorKind::InvalidData);
 
         assert!(tmp_dir.iter().size_hint().eq(&(0, None)));
         tmp_dir.close().unwrap();
