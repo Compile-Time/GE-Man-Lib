@@ -1,6 +1,6 @@
 [package]
 name = "ge-man-lib"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 keywords = ["GloriousEgroll", "GE-Proton", "Wine-GE", "GE-Man"]
 categories = ["api-bindings"]
