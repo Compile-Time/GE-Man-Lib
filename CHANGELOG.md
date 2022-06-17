@@ -7,6 +7,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+## [0.1.1] - 2022-06-17
+
+### Security
+
+* Update reqwest dependency
+* Update openssl dependency
+
+### Changed
+
+* Bring other dependencies up-to-date
+
 ## [0.1.0] - 2022-03-27
 
 ### Added
