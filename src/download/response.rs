@@ -111,6 +111,16 @@ impl GeAsset {
     }
 }
 
+impl Clone for GeAsset {
+    fn clone(&self) -> Self {
+        GeAsset {
+            name: self.name.clone(),
+            content_type: self.content_type.clone(),
+            browser_download_url: self.content_type.clone(),
+        }
+    }
+}
+
 /// Newtype for GitHub API tag name deserialization.
 #[derive(Debug, Deserialize)]
 pub(crate) struct CompatibilityToolTag {

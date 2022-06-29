@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Changed
+
+* Provide access to a GeAsset in ReadProgressWrapper::init.
+
 ## [0.1.1] - 2022-06-17
 
 ### Changed

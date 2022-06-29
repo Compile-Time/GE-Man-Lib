@@ -57,7 +57,7 @@ pub trait ReadProgressWrapper {
     ///     Box::new(DownloadProgressTracker::new(pb))
     /// }
     /// ```
-    fn init(self: Box<Self>, len: u64) -> Box<dyn ReadProgressWrapper>;
+    fn init(self: Box<Self>, len: u64, asset: &GeAsset) -> Box<dyn ReadProgressWrapper>;
     /// Wrap the actual `Read` type, which is the resource to be downloaded, with a progress tracking reader.
     fn wrap(&self, reader: Box<dyn Read>) -> Box<dyn Read>;
     /// Define how the implementing struct should finish tracking progress.
@@ -186,7 +186,7 @@ impl GeDownloader {
         let tar_size: u64 = response.content_length().unwrap();
         let mut compressed_archive: Vec<u8> = Vec::with_capacity(tar_size as usize);
 
-        let progress_wrapper = progress_wrapper.init(tar_size);
+        let progress_wrapper = progress_wrapper.init(tar_size, asset);
         progress_wrapper
             .wrap(Box::new(response))
             .read_to_end(&mut compressed_archive)
@@ -312,7 +312,7 @@ mod tests {
     mock! {
         ProgressWrapper {}
         impl ReadProgressWrapper for ProgressWrapper {
-            fn init(self: Box<Self>, len: u64) -> Box<dyn ReadProgressWrapper>;
+            fn init(self: Box<Self>, len: u64, asset: &GeAsset) -> Box<dyn ReadProgressWrapper>;
             fn wrap(&self, reader: Box<dyn Read>) -> Box<dyn Read>;
             fn finish(&self, release: &GeAsset);
         }
@@ -810,7 +810,7 @@ mod tests {
         let mut progress_wrapper = MockProgressWrapper::new();
         progress_wrapper.expect_finish().never();
         progress_wrapper.expect_wrap().never();
-        progress_wrapper.expect_init().once().returning(|_| {
+        progress_wrapper.expect_init().once().returning(|_, _| {
             let mut initialized_prog_wrapper = MockProgressWrapper::new();
             initialized_prog_wrapper.expect_init().never();
             initialized_prog_wrapper.expect_wrap().once().returning(|reader| reader);
