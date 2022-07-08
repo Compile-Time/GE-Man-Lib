@@ -271,6 +271,12 @@ impl PartialOrd<str> for Tag {
     }
 }
 
+impl From<Tag> for String {
+    fn from(tag: Tag) -> Self {
+        String::from(tag.value())
+    }
+}
+
 /// Represents the kind of version for a `Tag`.
 ///
 /// GE versions exists for both Proton and Wine. Additionally, for Wine also League of Legends specific versions

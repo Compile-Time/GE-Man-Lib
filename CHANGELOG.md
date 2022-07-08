@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+### Added
+
+* Implement From<Tag> for String.
+
 ### Changed
 
 * Provide access to a GeAsset in ReadProgressWrapper::init.
