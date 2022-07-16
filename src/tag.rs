@@ -146,7 +146,9 @@ impl Display for SemVer {
 /// This struct supports `serde`'s serialization and deserialization traits.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Tag {
-    value: String,
+    // Alias for versions before version 0.2.0.
+    #[serde(alias = "value")]
+    str: String,
     semver: SemVer,
 }
 
@@ -155,7 +157,7 @@ impl Tag {
         let value = git_tag.into();
         let semver = SemVer::from_git_tag(&value);
 
-        Tag { value, semver }
+        Tag { str: value, semver }
     }
 
     /// Get this `Tag` as a semantic version.
@@ -164,8 +166,8 @@ impl Tag {
     }
 
     /// Get the string value of this `Tag`.
-    pub fn value(&self) -> &String {
-        &self.value
+    pub fn str(&self) -> &String {
+        &self.str
     }
 }
 
@@ -207,19 +209,19 @@ impl From<Option<&str>> for Tag {
 
 impl AsRef<Path> for Tag {
     fn as_ref(&self) -> &Path {
-        self.value.as_ref()
+        self.str.as_ref()
     }
 }
 
 impl AsRef<str> for Tag {
     fn as_ref(&self) -> &str {
-        self.value.as_ref()
+        self.str.as_ref()
     }
 }
 
 impl Display for Tag {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.value)
+        write!(f, "{}", self.str)
     }
 }
 
@@ -245,7 +247,7 @@ impl Eq for Tag {}
 
 impl From<Tag> for String {
     fn from(tag: Tag) -> Self {
-        String::from(tag.value())
+        String::from(tag.str())
     }
 }
 
@@ -419,14 +421,25 @@ mod tag_tests {
     }
 
     #[test]
-    fn create_from_json() {
+    fn create_from_json_before_release_0_2_0() {
         let tag: Tag = serde_json::from_str(r###"{
             "value": "6.20-GE-1",
             "semver": {
                 "major": 6, "minor": 20, "patch": 1, "identifier": null
             }
         }"###).unwrap();
-        assert_eq!(tag.value(), "6.20-GE-1");
+        assert_eq!(tag.str(), "6.20-GE-1");
+    }
+
+    #[test]
+    fn create_from_json() {
+        let tag: Tag = serde_json::from_str(r###"{
+            "str": "6.20-GE-1",
+            "semver": {
+                "major": 6, "minor": 20, "patch": 1, "identifier": null
+            }
+        }"###).unwrap();
+        assert_eq!(tag.str(), "6.20-GE-1");
     }
 
     #[test_case(Tag::new("6.20-GE-1"), Tag::new("6.20-GE-1") => true)]
