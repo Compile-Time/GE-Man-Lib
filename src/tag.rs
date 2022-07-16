@@ -4,6 +4,7 @@
 
 use std::cmp::Ordering;
 use std::fmt::{Display, Formatter};
+use std::hash::{Hash, Hasher};
 use std::path::Path;
 
 use lazy_static::lazy_static;
@@ -274,6 +275,12 @@ impl PartialOrd<str> for Tag {
 impl From<Tag> for String {
     fn from(tag: Tag) -> Self {
         String::from(tag.value())
+    }
+}
+
+impl Hash for Tag {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.str.hash(state)
     }
 }
 
