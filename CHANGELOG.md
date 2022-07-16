@@ -7,13 +7,26 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
-### Added
+### Fixed
 
-* Implement From<Tag> for String.
+* Tag now uses the semantic version data for equal and compare operations.
 
 ### Changed
 
 * Provide access to a GeAsset in ReadProgressWrapper::init.
+* Renamed `Tag::value` to `Tag::str`.
+
+### Added
+
+* Implement `From<Tag>` for `String`.
+* Implement `Deref` and `DerefMut` traits for `Tag`.
+
+### Removed
+
+* Equal and compare implementations for `String` and `str`.<br>
+  Because `Tag` now correctly uses its semantic version data for equal and compare it makes no sense to provide these
+  implementations anymore.
+* `Tag::cmp_semver` - This method is obsolete due to semver comparison being the default now.
 
 ## [0.1.1] - 2022-06-17
 
