@@ -158,11 +158,6 @@ impl Tag {
         Tag { value, semver }
     }
 
-    /// Compare this `Tag` as an semantic version to another `Tag` as a semantic version.
-    pub fn cmp_semver(&self, b: &Tag) -> Ordering {
-        self.semver().cmp(&b.semver())
-    }
-
     /// Get this `Tag` as a semantic version.
     pub fn semver(&self) -> &SemVer {
         &self.semver
@@ -230,47 +225,23 @@ impl Display for Tag {
 
 impl PartialEq<Tag> for Tag {
     fn eq(&self, other: &Tag) -> bool {
-        self.value().eq(other.value())
+        self.semver.eq(other.semver())
     }
 }
 
 impl PartialOrd<Tag> for Tag {
     fn partial_cmp(&self, other: &Tag) -> Option<Ordering> {
-        self.value().partial_cmp(other.value())
+        self.semver.partial_cmp(other.semver())
     }
 }
 
 impl Ord for Tag {
     fn cmp(&self, other: &Self) -> Ordering {
-        self.value().cmp(other.value())
+        self.semver.cmp(other.semver())
     }
 }
 
 impl Eq for Tag {}
-
-impl PartialEq<String> for Tag {
-    fn eq(&self, other: &String) -> bool {
-        self.value.eq(other)
-    }
-}
-
-impl PartialEq<str> for Tag {
-    fn eq(&self, other: &str) -> bool {
-        self.value.eq(other)
-    }
-}
-
-impl PartialOrd<String> for Tag {
-    fn partial_cmp(&self, other: &String) -> Option<Ordering> {
-        self.value().partial_cmp(other)
-    }
-}
-
-impl PartialOrd<str> for Tag {
-    fn partial_cmp(&self, other: &str) -> Option<Ordering> {
-        self.value().as_str().partial_cmp(other)
-    }
-}
 
 impl From<Tag> for String {
     fn from(tag: Tag) -> Self {
@@ -456,6 +427,22 @@ mod tag_tests {
             }
         }"###).unwrap();
         assert_eq!(tag.value(), "6.20-GE-1");
+    }
+
+    #[test_case(Tag::new("6.20-GE-1"), Tag::new("6.20-GE-1") => true)]
+    #[test_case(Tag::new("6.20-GE-1"), Tag::new("6.21-GE-1") => false)]
+    fn equality_tests(a: Tag, b: Tag) -> bool {
+        a.eq(&b)
+    }
+
+    #[test_case(Tag::new("6.20-GE-1"), Tag::new("6.20-GE-1") => Ordering::Equal)]
+    #[test_case(Tag::new("6.20-GE-1"), Tag::new("6.21-GE-1") => Ordering::Less)]
+    #[test_case(Tag::new("6.20-GE-1"), Tag::new("6.19-GE-1") => Ordering::Greater)]
+    #[test_case(Tag::new("GE-Proton7-8"), Tag::new("GE-Proton7-8") => Ordering::Equal)]
+    #[test_case(Tag::new("GE-Proton7-8"), Tag::new("GE-Proton7-20") => Ordering::Less)]
+    #[test_case(Tag::new("GE-Proton7-8"), Tag::new("GE-Proton7-7") => Ordering::Greater)]
+    fn comparison_tests(a: Tag, b: Tag) -> Ordering {
+        a.cmp(&b)
     }
 }
 

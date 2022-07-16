@@ -163,7 +163,7 @@ impl GeDownloader {
             let latest_tag = tag_names
                 .into_iter()
                 .map(|t| Tag::from(t))
-                .max_by(Tag::cmp_semver);
+                .max_by(Tag::cmp);
             if let Some(t) = latest_tag {
                 return Ok(t);
             }
