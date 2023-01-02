@@ -41,6 +41,9 @@ pub struct DownloadedAssets {
     /// The compressed archive.
     pub compressed_archive: DownloadedArchive,
     /// The checksum of the compressed archive.
+    ///
+    /// The `checksum` for a archive can be `None` if `download_checksum` in `DownloadRequest` is
+    /// set to false.
     pub checksum: Option<DownloadedChecksum>,
 }
 
