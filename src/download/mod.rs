@@ -10,7 +10,9 @@ use lazy_static::lazy_static;
 use reqwest::blocking::Response;
 
 use crate::download::github::{GithubDownload, GithubDownloader};
-use crate::download::response::{CompatibilityToolTag, DownloadedArchive, DownloadedAssets, DownloadedChecksum, GeAsset, GeRelease};
+use crate::download::response::{
+    CompatibilityToolTag, DownloadedArchive, DownloadedAssets, DownloadedChecksum, GeAsset, GeRelease,
+};
 use crate::error::GithubError;
 use crate::tag::{Tag, TagKind, WineTagKind};
 
@@ -20,6 +22,7 @@ pub mod response;
 
 const APPLICATION_GZIP: &str = "application/gzip";
 const APPLICATION_OCTET_STREAM: &str = "application/octet-stream";
+const BINARY_OCTET_STREAM: &str = "binary/octet-stream";
 const APPLICATION_XZ: &str = "application/x-xz";
 
 const GITHUB_API_URL: &str = "https://api.github.com";
@@ -144,7 +147,8 @@ impl GeDownloader {
     fn find_latest_wine_ge_release_tag(&self, kind: &WineTagKind) -> Result<Tag, GithubError> {
         let mut page = 1;
         loop {
-            let mut tag_names: Vec<String> = self.fetch_wine_ge_tags(page)?
+            let mut tag_names: Vec<String> = self
+                .fetch_wine_ge_tags(page)?
                 .json::<Vec<CompatibilityToolTag>>()?
                 .into_iter()
                 .map(Into::into)
@@ -160,10 +164,7 @@ impl GeDownloader {
                 tag_names.retain(|t| !t.contains("LoL"));
             }
 
-            let latest_tag = tag_names
-                .into_iter()
-                .map(|t| Tag::from(t))
-                .max_by(Tag::cmp);
+            let latest_tag = tag_names.into_iter().map(|t| Tag::from(t)).max_by(Tag::cmp);
             if let Some(t) = latest_tag {
                 return Ok(t);
             }

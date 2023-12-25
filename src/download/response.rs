@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::download::{APPLICATION_GZIP, APPLICATION_OCTET_STREAM, APPLICATION_XZ};
+use crate::download::{APPLICATION_GZIP, APPLICATION_OCTET_STREAM, APPLICATION_XZ, BINARY_OCTET_STREAM};
 
 /// The compressed archive of the compatibility tool and file name.
 ///
@@ -73,7 +73,7 @@ impl GeRelease {
     }
 
     fn is_checksum_asset(asset: &GeAsset) -> bool {
-        asset.content_type.eq(APPLICATION_OCTET_STREAM)
+        asset.content_type.eq(APPLICATION_OCTET_STREAM) || asset.content_type.eq(BINARY_OCTET_STREAM)
     }
 
     fn is_tar_asset(asset: &GeAsset) -> bool {
@@ -143,7 +143,7 @@ mod ge_release_tests {
     use super::*;
 
     #[test]
-    fn get_checksum_asset() {
+    fn get_checksum_asset_with_application_octet_stream() {
         let tag = String::from("6.20-GE-1");
         let assets = vec![
             GeAsset::new("Proton-6.20-GE-1.tar.gz", APPLICATION_GZIP, "gzip"),
@@ -154,6 +154,21 @@ mod ge_release_tests {
         let checksum_asset = release.checksum_asset();
         assert_eq!(checksum_asset.name, "Proton-6.20-GE-1.sha512sum");
         assert_eq!(checksum_asset.content_type, APPLICATION_OCTET_STREAM);
+        assert_eq!(checksum_asset.browser_download_url, "octet");
+    }
+
+    #[test]
+    fn get_checksum_asset_with_binary_octet_stream() {
+        let tag = String::from("6.20-GE-1");
+        let assets = vec![
+            GeAsset::new("Proton-6.20-GE-1.tar.gz", APPLICATION_GZIP, "gzip"),
+            GeAsset::new("Proton-6.20-GE-1.sha512sum", BINARY_OCTET_STREAM, "octet"),
+        ];
+        let release = GeRelease::new(tag, assets);
+
+        let checksum_asset = release.checksum_asset();
+        assert_eq!(checksum_asset.name, "Proton-6.20-GE-1.sha512sum");
+        assert_eq!(checksum_asset.content_type, BINARY_OCTET_STREAM);
         assert_eq!(checksum_asset.browser_download_url, "octet");
     }
 
