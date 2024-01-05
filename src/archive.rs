@@ -41,7 +41,7 @@ pub fn checksums_match(compressed_tar: &[u8], expected_sum: &[u8]) -> bool {
         .split_whitespace()
         .next()
         .map(String::from)
-        .unwrap();
+        .unwrap_or(String::new());
 
     let digest = ring::digest::digest(&ring::digest::SHA512, compressed_tar);
     let sum = HEXLOWER.encode(digest.as_ref());

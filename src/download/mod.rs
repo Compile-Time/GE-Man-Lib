@@ -20,10 +20,13 @@ mod github;
 
 pub mod response;
 
-const APPLICATION_GZIP: &str = "application/gzip";
-const APPLICATION_OCTET_STREAM: &str = "application/octet-stream";
-const BINARY_OCTET_STREAM: &str = "binary/octet-stream";
-const APPLICATION_XZ: &str = "application/x-xz";
+#[cfg(test)]
+mod mime {
+    pub const APPLICATION_GZIP: &str = "application/gzip";
+    pub const APPLICATION_OCTET_STREAM: &str = "application/octet-stream";
+    pub const BINARY_OCTET_STREAM: &str = "binary/octet-stream";
+    pub const APPLICATION_XZ: &str = "application/x-xz";
+}
 
 const GITHUB_API_URL: &str = "https://api.github.com";
 const PROTON_GE_RELEASE_LATEST_URL: &str = "repos/GloriousEggroll/proton-ge-custom/releases/latest";
@@ -289,6 +292,7 @@ impl Default for GeDownloader {
 
 #[cfg(test)]
 mod tests {
+    use crate::download::mime::{APPLICATION_GZIP, APPLICATION_OCTET_STREAM};
     use httpmock::Method::GET;
     use httpmock::MockServer;
     use mockall::mock;

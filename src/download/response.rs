@@ -1,7 +1,5 @@
 use serde::Deserialize;
 
-use crate::download::{APPLICATION_GZIP, APPLICATION_OCTET_STREAM, APPLICATION_XZ, BINARY_OCTET_STREAM};
-
 /// The compressed archive of the compatibility tool and file name.
 ///
 /// For GE Proton the archive is provided as a `tar.gz` file.<br>
@@ -73,11 +71,11 @@ impl GeRelease {
     }
 
     fn is_checksum_asset(asset: &GeAsset) -> bool {
-        asset.content_type.eq(APPLICATION_OCTET_STREAM) || asset.content_type.eq(BINARY_OCTET_STREAM)
+        asset.name.contains(".sha512sum")
     }
 
     fn is_tar_asset(asset: &GeAsset) -> bool {
-        asset.content_type.eq(APPLICATION_GZIP) || asset.content_type.eq(APPLICATION_XZ)
+        asset.name.contains(".tar.gz")
     }
 
     pub fn checksum_asset(&self) -> &GeAsset {
@@ -138,7 +136,7 @@ impl From<CompatibilityToolTag> for String {
 
 #[cfg(test)]
 mod ge_release_tests {
-    use crate::download::{APPLICATION_GZIP, APPLICATION_OCTET_STREAM};
+    use crate::download::mime::{APPLICATION_GZIP, APPLICATION_OCTET_STREAM, BINARY_OCTET_STREAM};
 
     use super::*;
 
