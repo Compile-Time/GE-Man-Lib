@@ -25,7 +25,6 @@ mod mime {
     pub const APPLICATION_GZIP: &str = "application/gzip";
     pub const APPLICATION_OCTET_STREAM: &str = "application/octet-stream";
     pub const BINARY_OCTET_STREAM: &str = "binary/octet-stream";
-    pub const APPLICATION_XZ: &str = "application/x-xz";
 }
 
 const GITHUB_API_URL: &str = "https://api.github.com";
