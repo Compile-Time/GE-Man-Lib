@@ -25,6 +25,10 @@ lazy_static! {
     static ref TAG_MARKERS: Vec<String> = vec![String::from("rc"), String::from("LoL"), String::from("MF")];
 }
 
+/// Struct used to contain semantic versioning information.
+///
+/// The primary use of this struct is to extract information from version strings in the GitHub assets and to provide
+/// it a as a semantic version.
 #[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct SemVer {
     major: u8,
@@ -61,12 +65,24 @@ impl SemVer {
 
     pub fn str(&self) -> String {
         if self.identifier.is_some() {
-            format!("{}.{}.{}-{}", self.major, self.minor, self.patch, self.identifier.as_ref().unwrap())
+            format!(
+                "{}.{}.{}-{}",
+                self.major,
+                self.minor,
+                self.patch,
+                self.identifier.as_ref().unwrap()
+            )
         } else {
             format!("{}.{}.{}", self.major, self.minor, self.patch)
         }
     }
 
+    /// Create a `SemVer` type from a git tag.
+    ///
+    /// Some git tags contain special characters that need to be amended at the end of the semver string to stay
+    /// compliant with the semver standard. An example of this is the tag "5.0-rc5-GE-1", it should be represented as
+    /// "5.0.1-rc". At the moment, only the "rc" keyword has been observed in git tags and, therefore, only this keyword
+    /// is explicitly handled differently.
     fn from_git_tag(git_tag: &String) -> Self {
         let number_captures: Vec<Captures> = NUMBERS.captures_iter(&git_tag).collect();
 
@@ -123,7 +139,7 @@ impl SemVer {
             let version_number = &cap[FIRST_GROUP];
             let rc_query = format!("{}{}", RELEASE_CANDIDATE_MARKER, version_number);
             if git_tag.contains(&rc_query) {
-                // Since every match contains a single capture group we always
+                // Since every match contains a single capture group, we always get the first capture group.
                 return Some(cap.get(FIRST_GROUP).unwrap().clone());
             }
         }
@@ -146,7 +162,7 @@ impl Display for SemVer {
 /// This struct supports `serde`'s serialization and deserialization traits.
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Tag {
-    // Alias for versions before version 0.2.0.
+    // Alias for versions before ge-man-lib version 0.2.0.
     #[serde(alias = "value")]
     str: String,
     semver: SemVer,
@@ -306,7 +322,7 @@ impl TagKind {
     pub fn compatibility_tool_kind(&self) -> String {
         let name = match self {
             TagKind::Proton => "Proton",
-            TagKind::Wine { .. } => "Wine"
+            TagKind::Wine { .. } => "Wine",
         };
         String::from(name)
     }
@@ -422,23 +438,29 @@ mod tag_tests {
 
     #[test]
     fn create_from_json_before_release_0_2_0() {
-        let tag: Tag = serde_json::from_str(r###"{
+        let tag: Tag = serde_json::from_str(
+            r###"{
             "value": "6.20-GE-1",
             "semver": {
                 "major": 6, "minor": 20, "patch": 1, "identifier": null
             }
-        }"###).unwrap();
+        }"###,
+        )
+        .unwrap();
         assert_eq!(tag.str(), "6.20-GE-1");
     }
 
     #[test]
     fn create_from_json() {
-        let tag: Tag = serde_json::from_str(r###"{
+        let tag: Tag = serde_json::from_str(
+            r###"{
             "str": "6.20-GE-1",
             "semver": {
                 "major": 6, "minor": 20, "patch": 1, "identifier": null
             }
-        }"###).unwrap();
+        }"###,
+        )
+        .unwrap();
         assert_eq!(tag.str(), "6.20-GE-1");
     }
 
